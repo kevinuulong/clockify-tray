@@ -1,13 +1,13 @@
 'use strict';
 const path = require('path');
-const { app, BrowserWindow, Menu, Tray, screen, ipcMain, nativeTheme } = require('electron');
+const { app, BrowserWindow, Tray, screen, ipcMain, nativeTheme } = require('electron');
 /// const {autoUpdater} = require('electron-updater');
 const { is } = require('electron-util');
 const unhandled = require('electron-unhandled');
 const debug = require('electron-debug');
 const contextMenu = require('electron-context-menu');
 const config = require('./config.js');
-const menu = require('./menu.js');
+// const menu = require('./menu.js');
 const packageJson = require('./package.json');
 const fetch = require('node-fetch');
 const loadConfig = require('./loadConfig.js');
@@ -220,7 +220,7 @@ let tracking = {};
 
 (async () => {
 	await app.whenReady();
-	Menu.setApplicationMenu(menu);
+	// Menu.setApplicationMenu(menu);
 	const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 	mainWindow = await createMainWindow(width, height);
 
