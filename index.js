@@ -128,7 +128,7 @@ function createTray(win) {
 				tracking.start = new Date().toISOString();
 				console.log(tracking);
 				appIcon.setToolTip('Stop Timer');
-				appIcon.setImage(path.resolve('./static/stopIcon.png'));
+				appIcon.setImage(path.join(__dirname, './static/stopIcon.png'));
 				clickIndex = 1;
 			} else {
 				tracking.end = new Date().toISOString();
