@@ -13,7 +13,7 @@
 	"scripts": {
 		"postinstall": "electron-builder install-app-deps",
 		"lint": "xo",
-		"test": "npm run lint",
+		"test": "echo \"Error: no test specified\" && exit 1",
 		"start": "electron .",
 		"pack": "electron-builder --dir",
 		"dist": "electron-builder --macos --linux --windows",
