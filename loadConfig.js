@@ -1,14 +1,14 @@
 const config = require('./config.js');
 const fetch = require('node-fetch');
 const path = require('path');
-const { app, BrowserWindow, ipcMain, shell } = require('electron');
-const { constants } = require('buffer');
+const { app, BrowserWindow, ipcMain, nativeTheme } = require('electron');
 
 let configWindow;
 
 const createConfigWindow = async () => {
     const win = new BrowserWindow({
         title: app.name,
+        icon: './static/icon.png',
         width: 400,
         height: 260,
         frame: false,
@@ -25,6 +25,7 @@ const createConfigWindow = async () => {
     win.loadFile(path.join(__dirname, 'config.html'));
 
     win.on('ready-to-show', () => {
+        // if (nativeTheme.shouldUseDarkColors) configWindow.webContents.send('darkMode');
         win.show();
     });
 
@@ -35,7 +36,7 @@ const createConfigWindow = async () => {
     });
 
     win.on('close', () => {
-        config.set('complete', false)
+        if (!config.get('complete')) config.set('complete', false);
     })
 
     win.webContents.setWindowOpenHandler(({ url }) => {
@@ -51,21 +52,27 @@ ipcMain.on('close', () => {
     configWindow.close();
 })
 
+ipcMain.on('darkMode', (event, data) => {
+    event.returnValue = nativeTheme.shouldUseDarkColors;
+})
+
 // Check Config
-if (!config.get('complete')) {
+exports.request = () => {
+    if (!config.get('complete')) {
 
-    console.log(config.get('complete'));
+        console.log(config.get('complete'));
 
-    console.log('creating config window');
+        console.log('creating config window');
 
-    (async () => {
-        await app.whenReady();
-        configWindow = await createConfigWindow();
-        // config.clear();
-        configSteps();
-    })();
+        (async () => {
+            await app.whenReady();
+            configWindow = await createConfigWindow();
+            // config.clear();
+            configSteps();
+        })();
 
-};
+    }
+}
 
 ipcMain.on('apiKey', (event, data) => {
     console.log(data);
@@ -137,6 +144,7 @@ function configSteps() {
     } else {
         console.log('configuration complete');
         config.set('complete', true);
+        console.log(config.get('complete'));
         configWindow.webContents.send('configComplete');
     }
 }

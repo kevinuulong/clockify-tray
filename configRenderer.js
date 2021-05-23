@@ -10,6 +10,9 @@ window.onload = () => {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Enter') document.querySelector("#next").click();
     })
+
+    if (ipcRenderer.sendSync('darkMode')) document.querySelector("link[rel='stylesheet']").setAttribute('href', 'dark.css');
+
 }
 
 ipcRenderer.on('requestApiKey', () => {
@@ -17,10 +20,10 @@ ipcRenderer.on('requestApiKey', () => {
     console.log('request received');
 
     document.querySelector("#instruction").textContent = "Clockify API Key";
-    document.querySelector("#next").title = 'apiKey';
+    document.querySelector("#next").dataset.buttonId = 'apiKey';
     document.querySelector("#apiKey").style.display = 'block';
 
-    document.querySelector("#next[title='apiKey']").addEventListener('click', () => {
+    document.querySelector("#next[data-button-id='apiKey']").addEventListener('click', () => {
         ipcRenderer.send('apiKey', document.querySelector("#apiKeyInput").value);
         document.querySelector("#apiKey").style.display = 'none';
         removeButtonListeners();
@@ -32,8 +35,8 @@ ipcRenderer.on('requestWorkspace', (e, data) => {
 
     console.log('request received');
 
-    document.querySelector("#instruction").textContent = "Clockify Workspace";
-    document.querySelector("#next").title = 'workspace';
+    document.querySelector("#instruction").textContent = "Select Your Workspace";
+    document.querySelector("#next").dataset.buttonId = 'workspace';
     document.querySelector("#workspace").style.display = 'block';
 
     Object.keys(data).forEach((el) => {
@@ -50,7 +53,7 @@ ipcRenderer.on('requestWorkspace', (e, data) => {
 
 
 
-    document.querySelector("#next[title='workspace']").addEventListener('click', () => {
+    document.querySelector("#next[data-button-id='workspace']").addEventListener('click', () => {
         console.log('sending workspace')
         ipcRenderer.send('workspace', document.querySelector(".workspaceOption.selected").textContent);
         document.querySelector("#workspace").style.display = 'none';
@@ -63,7 +66,7 @@ ipcRenderer.on('requestProject', (e, data) => {
     console.log('request received');
 
     document.querySelector("#instruction").textContent = "Default Project";
-    document.querySelector("#next").title = 'project';
+    document.querySelector("#next").dataset.buttonId = 'project';
     document.querySelector("#project").style.display = 'block';
 
     Object.keys(data).forEach((el) => {
@@ -80,7 +83,7 @@ ipcRenderer.on('requestProject', (e, data) => {
 
 
 
-    document.querySelector("#next[title='project']").addEventListener('click', () => {
+    document.querySelector("#next[data-button-id='project']").addEventListener('click', () => {
         console.log('sending project')
         ipcRenderer.send('project', document.querySelector(".projectOption.selected").textContent);
         document.querySelector("#project").style.display = 'none';
@@ -93,7 +96,7 @@ ipcRenderer.on('configComplete', (e, data) => {
     console.log('request received');
 
     document.querySelector("#instruction").textContent = "Configuration Completed";
-    document.querySelector("#next").title = 'complete';
+    document.querySelector("#next").dataset.buttonId = 'complete';
     document.querySelector("#next").textContent = 'Complete';
     document.querySelector("#complete").style.display = 'block';
 
@@ -120,7 +123,7 @@ ipcRenderer.on('configComplete', (e, data) => {
         startVelocity: 45,
     });
 
-    document.querySelector("#next[title='complete']").addEventListener('click', () => {
+    document.querySelector("#next[data-button-id='complete']").addEventListener('click', () => {
         console.log('closing configuration')
         ipcRenderer.send('close');
     })

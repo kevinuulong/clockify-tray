@@ -1,6 +1,6 @@
 'use strict';
 const path = require('path');
-const { app, BrowserWindow, Menu, Tray, screen, ipcMain } = require('electron');
+const { app, BrowserWindow, Menu, Tray, screen, ipcMain, nativeTheme } = require('electron');
 /// const {autoUpdater} = require('electron-updater');
 const { is } = require('electron-util');
 const unhandled = require('electron-unhandled');
@@ -10,10 +10,14 @@ const config = require('./config.js');
 const menu = require('./menu.js');
 const packageJson = require('./package.json');
 const fetch = require('node-fetch');
+const loadConfig = require('./loadConfig.js');
 // in the main process:
 require('@electron/remote/main').initialize()
 
-require('./loadConfig.js')
+// config.clear();
+
+// require('./loadConfig.js')
+loadConfig.request();
 
 
 unhandled();
@@ -42,6 +46,7 @@ const createMainWindow = async (width, height) => {
 	let padding = 20;
 	const win = new BrowserWindow({
 		title: app.name,
+		icon: './static/icon.png',
 		show: false,
 		width: 400,
 		height: 260,
@@ -90,7 +95,7 @@ const createMainWindow = async (width, height) => {
 	win.on('show', () => {
 		if (tray) {
 			tray.destroy();
-			mainWindow.webContents.executeJavaScript(`document.querySelector('#project').value = '${defaultProject}'`);
+			// mainWindow.webContents.executeJavaScript(`document.querySelector('#project').value = '${defaultProject}'`);
 		}
 	})
 
@@ -103,33 +108,51 @@ const createMainWindow = async (width, height) => {
 
 
 let clickIndex = 0;
+let rightClickIndex = 0;
 
 function createTray(win) {
-	let appIcon = new Tray(path.join(__dirname, "./static/icon.png"));
+	let appIcon = new Tray(path.join(__dirname, "./static/startIcon.png"));
 
-	appIcon.on('click', () => {
-		if (clickIndex === 0) {
-			tracking.start = new Date().toISOString();
-			console.log(tracking);
-			clickIndex = 1;
+	appIcon.on('click', (event) => {
+		if (config.get('complete')) {
+			if (clickIndex === 0) {
+				tracking.start = new Date().toISOString();
+				console.log(tracking);
+				appIcon.setToolTip('Stop Timer');
+				appIcon.setImage('./static/stopIcon.png');
+				clickIndex = 1;
+			} else {
+				tracking.end = new Date().toISOString();
+				console.log('loading main window')
+				if (win)
+					win.loadFile(path.join(__dirname, 'index.html'));
+				console.log('file loaded');
+				// if (nativeTheme.shouldUseDarkColors) mainWindow.webContents.send('darkMode');
+				mainWindow.show();
+				// mainWindow.webContents.executeJavaScript(`document.querySelector('#project').value = '${defaultProject}'`);
+				mainWindow.webContents.send('times', tracking);
+				clickIndex = 0;
+			}
 		} else {
-			tracking.end = new Date().toISOString();
-			console.log('loading main window')
-			if (win)
-				win.loadFile(path.join(__dirname, 'index.html'));
-			console.log('file loaded');
-			mainWindow.show();
-			mainWindow.webContents.executeJavaScript(`document.querySelector('#project').value = '${defaultProject}'`);
-			mainWindow.webContents.send('times', tracking);
-			clickIndex = 0;
+			console.log('requesting setup');
+			// require('./loadConfig.js');
+			loadConfig.request();
 		}
 	})
 
-	appIcon.on('double-click', () => {
-		config.clear();
-		require('./loadConfig.js');
+	appIcon.on('right-click', () => {
+		console.log('right-click');
+		if (rightClickIndex === 0) {
+			rightClickIndex = 1;
+			setTimeout(() => {
+				rightClickIndex = 0;
+			}, 2000);
+		} else {
+			config.clear();
+			loadConfig.request();
+		}
 	})
-	appIcon.setToolTip('Stop Timer');
+	appIcon.setToolTip('Start Timer');
 	console.log(clickIndex);
 	return appIcon;
 }
@@ -163,24 +186,32 @@ app.on('activate', () => {
 
 ipcMain.on('report', (event, data) => {
 	fetch(`https://api.clockify.me/api/v1/workspaces/${config.get('workspaces')[config.get('workspace')]}/time-entries/`, {
-            method: 'POST',
-            headers: {
-                'X-Api-Key': config.get('apiKey'),
-                'Content-Type': 'application/json'
-            },
-			body: JSON.stringify({
-				start: data.start,
-				billable: data.billable,
-				description: data.description,
-				projectId: config.get('projects')[data.project],
-				end: data.end
-			})
-        })
-            .then(res => res.text())
-            .then(res => JSON.parse(res))
-            .then(res => {
-                console.log(res);
-            })
+		method: 'POST',
+		headers: {
+			'X-Api-Key': config.get('apiKey'),
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			start: data.start,
+			billable: data.billable,
+			description: data.description,
+			projectId: config.get('projects')[data.project],
+			end: data.end
+		})
+	})
+		.then(res => res.text())
+		.then(res => JSON.parse(res))
+		.then(res => {
+			console.log(res);
+		})
+})
+
+ipcMain.on('defaultProject', (event, data) => {
+	event.returnValue = config.get('project');
+})
+
+ipcMain.on('darkMode', (event, data) => {
+	event.returnValue = nativeTheme.shouldUseDarkColors;
 })
 
 let defaultProject = config.get('project');
@@ -193,5 +224,5 @@ let tracking = {};
 	const { width, height } = screen.getPrimaryDisplay().workAreaSize;
 	mainWindow = await createMainWindow(width, height);
 
-	mainWindow.webContents.executeJavaScript(`document.querySelector('#project').value = '${defaultProject}'`);
+	// mainWindow.webContents.executeJavaScript(`document.querySelector('#project').value = '${defaultProject}'`);
 })();
