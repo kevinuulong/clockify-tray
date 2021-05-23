@@ -1,0 +1,195 @@
+html,
+body {
+	padding: 0;
+	margin: 0;
+	background: transparent;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap');
+
+/* Use OS default fonts */
+body {
+	font-family:
+		'Montserrat', system-ui,
+		-apple-system,
+		'Segoe UI',
+		Roboto,
+		Helvetica,
+		Arial,
+		sans-serif,
+		'Apple Color Emoji',
+		'Segoe UI Emoji';
+	text-rendering: optimizeLegibility;
+	font-feature-settings: 'liga', 'clig', 'kern';
+	color: #2b2c30;
+	user-select: none;
+}
+
+.container {
+	width: 100%;
+	height: 100%;
+	height: 100vh;
+	background-color: rgb(240, 240, 246, 0.9); /* #f0f0f6 */
+	overflow: hidden;
+	border-radius: 20px;
+}
+
+h1 {
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 22px;
+	margin: 0;
+	margin-left: 20px;
+	margin-right: 20px;
+	height: 40px;
+}
+
+#frame {
+	position: relative;
+	width: 100%;
+	height: 40px;
+	-webkit-app-region: drag;
+}
+
+#frame svg {
+	position: absolute;
+	height: 20px;
+	right: 10px;
+	top: 10px;
+	cursor: pointer;
+	fill: #2b2c30;
+	-webkit-user-drag: none;
+
+	-webkit-app-region: none;
+}
+
+input[type=text], input[type=password] {
+	display: block;
+	border: none;
+	height: 40px;
+	border-radius: 10px;
+	padding: 0;
+	padding-left: 10px;
+	padding-right: 10px;
+	font-family: 'Montserrat', sans-serif;
+	color: #2b2c30;
+	font-size: 14px;
+	line-height: 17px;
+	margin-bottom: 20px;
+}
+
+#title, #apiKeyInput {
+	width: calc(100% - 60px);
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+#project:not(.configSection) {
+	margin-left: 20px;
+	display: inline-block;
+	width: 220px;
+}
+
+input:focus {
+	outline: none;
+}
+
+label {
+	font-weight: 600;
+	font-size: 14px;
+	line-height: 17px;
+	margin-left: 20px;
+	cursor: pointer;
+}
+
+input[type=checkbox] {
+	transform: scale(1.5);
+	margin-left: 20px;
+	cursor: pointer;
+}
+
+.button {
+	height: 40px;
+	width: 120px;
+	background-color: #2F80ED;
+	color: #f0f0f6;
+	font-weight: 600;
+	font-size: 18px;
+	line-height: 22px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	border-radius: 10px;
+}
+
+#submit, #next {
+	position: absolute;
+	right: 20px;
+}
+
+#next {
+	bottom: 20px;
+}
+
+a {
+	color: #2F80ED;
+	font-size: 14px;
+	line-height: 17px;
+}
+
+p {
+	font-size: 14px;
+	line-height: 17px;
+	display: inline-block;
+	margin: 0;
+	margin-left: 20px;
+}
+
+.configSection {
+	display: none;
+}
+
+.workspaceOption {
+	display: block;
+	margin-bottom: 10px;
+	cursor: pointer;
+}
+
+.workspaceOption.selected::after {
+	content: '☑';
+	margin-left: 20px;
+}
+
+.projectOption {
+	display: block;
+	margin-bottom: 10px;
+	margin-left: 20px;
+	cursor: pointer;
+}
+
+.projectOption.selected::after {
+	content: '☑';
+	margin-left: 20px;
+}
+
+#workspace {
+	overflow-y: auto;
+	height: 100px;
+}
+
+#project.configSection {
+	overflow-y: auto;
+	height: 100px;
+}
+
+::-webkit-scrollbar {
+    background: transparent;
+    width: 10px;
+    margin: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #2F80ED;
+    border-radius: 5px;
+}
