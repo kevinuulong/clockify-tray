@@ -11,8 +11,17 @@ const config = require('./config.js');
 const packageJson = require('./package.json');
 const fetch = require('node-fetch');
 const loadConfig = require('./loadConfig.js');
+const AutoLaunch = require('auto-launch');
 // in the main process:
 require('@electron/remote/main').initialize()
+
+let autoLaunch = new AutoLaunch({
+	name: 'Clockify Tray',
+	path: app.getPath('exe'),
+});
+autoLaunch.isEnabled().then((isEnabled) => {
+	if (!isEnabled) autoLaunch.enable();
+});
 
 // config.clear();
 
@@ -24,7 +33,7 @@ unhandled();
 // debug();
 contextMenu();
 
-app.setAppUserModelId(packageJson.build.appId);
+// app.setAppUserModelId(packageJson.build.appId);
 
 // Uncomment this before publishing your first version.
 // It's commented out as it throws an error if there are no published versions.
@@ -119,7 +128,7 @@ function createTray(win) {
 				tracking.start = new Date().toISOString();
 				console.log(tracking);
 				appIcon.setToolTip('Stop Timer');
-				appIcon.setImage('./static/stopIcon.png');
+				appIcon.setImage(path.resolve('./static/stopIcon.png'));
 				clickIndex = 1;
 			} else {
 				tracking.end = new Date().toISOString();

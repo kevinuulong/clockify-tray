@@ -1,7 +1,7 @@
 {
 	"name": "clockify-tray",
-	"productName": "clockify tray",
-	"version": "0.1.0",
+	"productName": "Clockify Tray",
+	"version": "1.0.5",
 	"description": "A simple tray application for recording clockify sessions.",
 	"license": "MIT",
 	"repository": "kevinuulong/clockify-tray",
@@ -21,6 +21,7 @@
 	},
 	"dependencies": {
 		"@electron/remote": "^1.1.0",
+		"auto-launch": "^5.0.5",
 		"canvas-confetti": "^1.4.0",
 		"electron-context-menu": "^3.0.0",
 		"electron-debug": "^3.2.0",
@@ -46,34 +47,5 @@
 	"np": {
 		"publish": false,
 		"releaseDraft": false
-	},
-	"build": {
-		"appId": "com.kevinuulong.clockify-tray",
-		"mac": {
-			"category": "public.app-category.social-networking",
-			"darkModeSupport": true
-		},
-		"dmg": {
-			"iconSize": 160,
-			"contents": [
-				{
-					"x": 180,
-					"y": 170
-				},
-				{
-					"x": 480,
-					"y": 170,
-					"type": "link",
-					"path": "/Applications"
-				}
-			]
-		},
-		"linux": {
-			"target": [
-				"AppImage",
-				"deb"
-			],
-			"category": "Network;Chat"
-		}
 	}
 }
