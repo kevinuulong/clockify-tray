@@ -1,8 +1,8 @@
 {
 	"name": "clockify-tray",
 	"productName": "clockify tray",
-	"version": "0.0.0",
-	"description": "My tremendous app",
+	"version": "0.1.0",
+	"description": "A simple tray application for recording clockify sessions.",
 	"license": "MIT",
 	"repository": "kevinuulong/clockify-tray",
 	"author": {
